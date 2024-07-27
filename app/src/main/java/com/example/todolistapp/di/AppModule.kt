@@ -1,9 +1,10 @@
 package com.example.todolistapp.di
 
-import com.example.todolistapp.data.repository.AuthRepositoryImpl
+import com.example.todolistapp.data.remote.AuthRepositoryImpl
 import com.example.todolistapp.domain.repository.AuthRepository
-import com.example.todolistapp.domain.usecase.LoginUseCase
+import com.example.todolistapp.domain.usecase.UserUseCase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,13 +21,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository =
-        AuthRepositoryImpl(firebaseAuth)
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
 
     @Provides
     @Singleton
-    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
-        return LoginUseCase(authRepository)
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository =
+        AuthRepositoryImpl(firebaseAuth, firestore)
+
+    @Provides
+    @Singleton
+    fun provideLoginUseCase(authRepository: AuthRepository): UserUseCase {
+        return UserUseCase(authRepository)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.todolistapp.presentation.login.ui
+package com.example.todolistapp.presentation.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,9 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todolistapp.R
 import com.example.todolistapp.databinding.FragmentLoginBinding
-import com.example.todolistapp.presentation.login.viewmodel.LoginState
-import com.example.todolistapp.presentation.login.viewmodel.LoginViewModel
-import com.google.firebase.FirebaseApp
+import com.example.todolistapp.presentation.utils.GenericState
+import com.example.todolistapp.presentation.utils.ProgressBarHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,39 +43,31 @@ class LoginFragment : Fragment() {
 
             loginAction(email, password)
         }
+
+        binding.tvRegister.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
     }
 
     private fun loginAction(email: String, password: String) {
         viewModel.login(email, password)
         viewModel.loginState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is LoginState.Loading -> {
-                    showProgressBar()
+                is GenericState.Loading -> {
+                    ProgressBarHandler(binding.progressBar).showProgressBar()
                 }
 
-                is LoginState.Success -> {
-                    navigateToHomeScreen()
+                is GenericState.Success -> {
+                    ProgressBarHandler(binding.progressBar).hideProgressBar()
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
 
-                is LoginState.Error -> {
-                    hideProgressBar()
+                is GenericState.Error -> {
+                    ProgressBarHandler(binding.progressBar).hideProgressBar()
+                    binding.tvFailedLogin.visibility = View.VISIBLE
                 }
             }
         }
-    }
-
-    // Function to navigate to the home screen
-    private fun navigateToHomeScreen() {
-        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-    }
-
-    // progress bar visibility
-    private fun showProgressBar() {
-        binding.progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        binding.progressBar.visibility = View.GONE
     }
 
 }

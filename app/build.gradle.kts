@@ -1,7 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.gms.google-services") version "4.4.2"
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -71,5 +74,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // Dependency Injection
-    implementation(libs.hilt.android)
+    implementation(libs.hilt)
+    implementation(libs.androidx.hilt)
+    ksp(libs.hilt.android.compiler)
 }

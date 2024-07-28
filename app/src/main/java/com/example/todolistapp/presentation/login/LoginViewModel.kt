@@ -1,7 +1,9 @@
 package com.example.todolistapp.presentation.login
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.todolistapp.domain.usecase.UserUseCase
 import com.example.todolistapp.presentation.utils.GenericState
@@ -19,14 +21,18 @@ class LoginViewModel @Inject constructor(private val userUseCase: UserUseCase) :
     // LoginResult class
     private val _loginResult = MutableLiveData<Result<Boolean>>()
 
+    // Error message
+    val errorMessage: LiveData<String> = _loginResult.map {
+        it.exceptionOrNull()?.message ?: ""
+    }
+
     // Function to login
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = GenericState.Loading
             _loginResult.value = userUseCase.login(email, password)
-
             // If login is successful, set the login state to success
-            if (_loginResult.value == Result.success(true)) {
+            if (_loginResult.value?.isSuccess == true && _loginResult.value?.getOrNull() == true) {
                 _loginState.value = GenericState.Success
             } else {
                 // If login is unsuccessful, set the login state to error

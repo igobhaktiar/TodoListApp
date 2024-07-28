@@ -31,6 +31,16 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAction()
+
+        viewModel.isSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess == true) {
+                ProgressBarHandler(binding.progressBar).hideProgressBar()
+                navigateToHomeFragment()
+            } else {
+                ProgressBarHandler(binding.progressBar).hideProgressBar()
+                binding.tvError.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun initAction() {
@@ -55,16 +65,6 @@ class RegisterFragment : Fragment() {
 
     private fun registerAction(email: String, password: String, username: String) {
         viewModel.register(email, password, username)
-        viewModel.isSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            println("isSuccess: $isSuccess")
-            if (isSuccess == true) {
-                ProgressBarHandler(binding.progressBar).hideProgressBar()
-                navigateToHomeFragment()
-            } else {
-                ProgressBarHandler(binding.progressBar).hideProgressBar()
-                binding.tvError.visibility = View.VISIBLE
-            }
-        }
     }
 
     // navigate to login fragment

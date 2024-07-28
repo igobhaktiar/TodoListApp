@@ -33,6 +33,24 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize the action
         initAction()
+
+        viewModel.loginState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is GenericState.Loading -> {
+                    ProgressBarHandler(binding.progressBar).showProgressBar()
+                }
+
+                is GenericState.Success -> {
+                    ProgressBarHandler(binding.progressBar).hideProgressBar()
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }
+
+                is GenericState.Error -> {
+                    ProgressBarHandler(binding.progressBar).hideProgressBar()
+                    binding.tvFailedLogin.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     // Function to initialize the action
@@ -51,23 +69,6 @@ class LoginFragment : Fragment() {
 
     private fun loginAction(email: String, password: String) {
         viewModel.login(email, password)
-        viewModel.loginState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is GenericState.Loading -> {
-                    ProgressBarHandler(binding.progressBar).showProgressBar()
-                }
-
-                is GenericState.Success -> {
-                    ProgressBarHandler(binding.progressBar).hideProgressBar()
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                }
-
-                is GenericState.Error -> {
-                    ProgressBarHandler(binding.progressBar).hideProgressBar()
-                    binding.tvFailedLogin.visibility = View.VISIBLE
-                }
-            }
-        }
     }
 
 }

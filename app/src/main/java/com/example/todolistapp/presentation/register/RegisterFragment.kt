@@ -1,49 +1,32 @@
 package com.example.todolistapp.presentation.register
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todolistapp.R
+import com.example.todolistapp.base.BaseFragment
 import com.example.todolistapp.databinding.FragmentRegisterBinding
-import com.example.todolistapp.presentation.utils.GenericState
 import com.example.todolistapp.presentation.utils.ProgressBarHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RegisterFragment : Fragment() {
+class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
 
-    private lateinit var binding: FragmentRegisterBinding
     private val viewModel: RegisterViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): FragmentRegisterBinding = FragmentRegisterBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initAction()
+    override fun initUI() {}
 
-        viewModel.isSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess == true) {
-                ProgressBarHandler(binding.progressBar).hideProgressBar()
-                navigateToHomeFragment()
-            } else {
-                ProgressBarHandler(binding.progressBar).hideProgressBar()
-                binding.tvError.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun initAction() {
+    override fun initAction() {
         binding.btnRegister.setOnClickListener {
             ProgressBarHandler(binding.progressBar).showProgressBar()
             val email = binding.etEmail.text.toString()
@@ -55,7 +38,21 @@ class RegisterFragment : Fragment() {
 
         binding.tvLogin.setOnClickListener {
             ProgressBarHandler(binding.progressBar).hideProgressBar()
-            navigateToLoginFragment()
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
+    }
+
+    override fun initProcess() {}
+
+    override fun observeData() {
+        viewModel.isSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess == true) {
+                ProgressBarHandler(binding.progressBar).hideProgressBar()
+                findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+            } else {
+                ProgressBarHandler(binding.progressBar).hideProgressBar()
+                binding.tvError.visibility = View.VISIBLE
+            }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
@@ -65,16 +62,6 @@ class RegisterFragment : Fragment() {
 
     private fun registerAction(email: String, password: String, username: String) {
         viewModel.register(email, password, username)
-    }
-
-    // navigate to login fragment
-    private fun navigateToLoginFragment() {
-        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-    }
-
-    // navigate to home fragment
-    private fun navigateToHomeFragment() {
-        findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
     }
 
 }

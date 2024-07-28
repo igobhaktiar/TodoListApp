@@ -8,32 +8,43 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todolistapp.R
+import com.example.todolistapp.base.BaseFragment
 import com.example.todolistapp.databinding.FragmentLoginBinding
 import com.example.todolistapp.presentation.utils.GenericState
 import com.example.todolistapp.presentation.utils.ProgressBarHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
-    private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
-    // Inflate the layout for this fragment
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
+    ): FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
+
+    override fun initUI() {
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Initialize the action
-        initAction()
+    // Function to initialize the action
+    override fun initAction() {
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString()
+            val password = binding.etPassword.text.toString()
+            loginAction(email, password)
+        }
 
+        binding.tvRegister.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
+    }
+
+    override fun initProcess() {
+    }
+
+    override fun observeData() {
         viewModel.loginState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is GenericState.Loading -> {
@@ -51,19 +62,9 @@ class LoginFragment : Fragment() {
                 }
             }
         }
-    }
 
-    // Function to initialize the action
-    private fun initAction() {
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-
-            loginAction(email, password)
-        }
-
-        binding.tvRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            binding.tvFailedLogin.text = errorMessage
         }
     }
 

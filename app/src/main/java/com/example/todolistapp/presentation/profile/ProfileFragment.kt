@@ -22,10 +22,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     ): FragmentProfileBinding = FragmentProfileBinding.inflate(inflater, container, false)
 
     override fun initUI() {
+        // Check if the user is logged in
+        if (!viewModel.isLoggedIn()) {
+            // If the user is not logged in, navigate to login screen
+            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        }
+        // Get user data
+        val user = viewModel.getUserData()
+        // Set user data to the UI
+        binding.tvEmail.text = user.email
+        binding.tvName.text = user.username
     }
 
     override fun initAction() {
-        binding.btnLogOut.setOnClickListener {
+        binding.btnLogout.setOnClickListener {
             // Handle log out button click
             viewModel.logOut()
             // Navigate to login screen

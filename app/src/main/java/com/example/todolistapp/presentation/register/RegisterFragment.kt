@@ -38,7 +38,7 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
 
         binding.tvLogin.setOnClickListener {
             ProgressBarHandler(binding.progressBar).hideProgressBar()
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            navigateToLogin()
         }
     }
 
@@ -48,7 +48,7 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
         viewModel.isSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess == true) {
                 ProgressBarHandler(binding.progressBar).hideProgressBar()
-                findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                navigateToLogin()
             } else {
                 ProgressBarHandler(binding.progressBar).hideProgressBar()
                 binding.tvError.visibility = View.VISIBLE
@@ -62,6 +62,10 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
 
     private fun registerAction(email: String, password: String, username: String) {
         viewModel.register(email, password, username)
+    }
+
+    private fun navigateToLogin() {
+        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
     }
 
 }

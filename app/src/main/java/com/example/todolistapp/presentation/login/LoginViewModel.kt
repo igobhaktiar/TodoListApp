@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.todolistapp.data.source.local.SharedPreferenceHelper
-import com.example.todolistapp.domain.usecase.UserUseCase
+import com.example.todolistapp.domain.usecase.AuthUseCase
 import com.example.todolistapp.presentation.utils.GenericState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import com.example.todolistapp.data.model.User
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userUseCase: UserUseCase,
-    private val sharedPreferenceHelper: SharedPreferenceHelper
+    private val authUseCase: AuthUseCase,
 ) : ViewModel() {
 
     // LoginState class
@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
     val loginState = _loginState
 
     // LoginResult class
-    private val _loginResult = MutableLiveData<Result<Boolean>>()
+    private val _loginResult = MutableLiveData<Result<User>>()
 
     // Error message
     val errorMessage: LiveData<String> = _loginResult.map {
@@ -34,12 +34,15 @@ class LoginViewModel @Inject constructor(
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = GenericState.Loading
-            _loginResult.value = userUseCase.login(email, password)
+            _loginResult.value = authUseCase.login(email, password)
             // If login is successful, set the login state to success
-            if (_loginResult.value?.isSuccess == true && _loginResult.value?.getOrNull() == true) {
+            if (_loginResult.value?.isSuccess == true && _loginResult.value?.getOrNull() != null) {
                 _loginState.value = GenericState.Success
-                sharedPreferenceHelper.saveEmail(email)
-                sharedPreferenceHelper.saveLoginState(true)
+                // Save the login state to shared preferences
+                authUseCase.saveLoginState(true)
+                // Save the user data to shared preference
+                val user = _loginResult.value?.getOrNull()!!
+                authUseCase.saveUserData(user)
             } else {
                 // If login is unsuccessful, set the login state to error
                 _loginState.value = GenericState.Error

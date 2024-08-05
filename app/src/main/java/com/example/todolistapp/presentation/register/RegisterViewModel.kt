@@ -6,13 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.todolistapp.data.model.User
-import com.example.todolistapp.domain.usecase.UserUseCase
+import com.example.todolistapp.data.source.local.SharedPreferenceHelper
+import com.example.todolistapp.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor(private val userUseCase: UserUseCase) : ViewModel() {
+class RegisterViewModel @Inject constructor(
+    private val userUseCase: AuthUseCase,
+) : ViewModel() {
     // RegisterResult class
     private val _registerResult = MutableLiveData<Result<User>>()
 
@@ -34,6 +37,11 @@ class RegisterViewModel @Inject constructor(private val userUseCase: UserUseCase
             // If registration is successful, set the success state to true
             if (_registerResult.value?.isSuccess == true) {
                 _isSuccess.value = true
+                // Save the user data to shared preferences
+                val user = _registerResult.value?.getOrNull()
+                userUseCase.saveUser(user!!)
+                // Save the login state to shared preferences
+                userUseCase.saveLoginState(true)
             } else {
                 // If registration is unsuccessful, set the success state to false
                 _isSuccess.value = false

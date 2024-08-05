@@ -1,6 +1,7 @@
 package com.example.todolistapp.data.source.local
 
 import android.content.Context
+import com.example.todolistapp.data.model.User
 
 
 class SharedPreferenceHelper(context: Context) {
@@ -25,43 +26,20 @@ class SharedPreferenceHelper(context: Context) {
     }
 
     // Function to save user data
-    fun saveUserData(userId: String, username: String, email: String) {
-        sharedPreferences.edit()
-            .putString(KEY_USER_ID, userId)
-            .putString(KEY_USERNAME, username)
-            .putString(KEY_EMAIL, email)
-            .apply()
+    fun saveUserData(user: User) {
+        sharedPreferences.edit().putString(KEY_EMAIL, user.email).apply()
+        sharedPreferences.edit().putString(KEY_USERNAME, user.username).apply()
+        sharedPreferences.edit().putString(KEY_USER_ID, user.id).apply()
     }
 
-    // Function to save email
-    fun saveEmail(email: String) {
-        sharedPreferences.edit().putString(KEY_EMAIL, email).apply()
+    // Function to get user data
+    fun getUserData(): User {
+        val email = sharedPreferences.getString(KEY_EMAIL, "") ?: ""
+        val username = sharedPreferences.getString(KEY_USERNAME, "") ?: ""
+        val id = sharedPreferences.getString(KEY_USER_ID, "") ?: ""
+        return User(email, id, username)
     }
 
-    // Function to save username
-    fun saveUsername(username: String) {
-        sharedPreferences.edit().putString(KEY_USERNAME, username).apply()
-    }
-
-    // Function to save user id
-    fun saveUserId(userId: String) {
-        sharedPreferences.edit().putString(KEY_USER_ID, userId).apply()
-    }
-
-    // Function to get user id
-    fun getUserId(): String {
-        return sharedPreferences.getString(KEY_USER_ID, "") ?: ""
-    }
-
-    // Function to get username
-    fun getUsername(): String {
-        return sharedPreferences.getString(KEY_USERNAME, "") ?: ""
-    }
-
-    // Function to get email
-    fun getEmail(): String {
-        return sharedPreferences.getString(KEY_EMAIL, "") ?: ""
-    }
 
     // Function to clear user data
     fun clearUserData() {

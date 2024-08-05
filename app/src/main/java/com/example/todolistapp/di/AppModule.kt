@@ -2,8 +2,11 @@ package com.example.todolistapp.di
 
 import android.content.Context
 import com.example.todolistapp.data.repository.AuthRepositoryImpl
+import com.example.todolistapp.data.repository.UserRepositoryImpl
 import com.example.todolistapp.data.source.local.SharedPreferenceHelper
 import com.example.todolistapp.domain.repository.AuthRepository
+import com.example.todolistapp.domain.repository.UserRepository
+import com.example.todolistapp.domain.usecase.AuthUseCase
 import com.example.todolistapp.domain.usecase.UserUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,22 +27,34 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
-    }
+    fun provideFirebaseFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     @Provides
     @Singleton
     fun provideAuthRepository(
         firebaseAuth: FirebaseAuth,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        userUseCase: UserUseCase,
+        sharedPreferenceHelper: SharedPreferenceHelper
     ): AuthRepository =
-        AuthRepositoryImpl(firebaseAuth, firestore)
+        AuthRepositoryImpl(firebaseAuth, firestore, userUseCase, sharedPreferenceHelper)
 
     @Provides
     @Singleton
-    fun provideLoginUseCase(authRepository: AuthRepository): UserUseCase {
-        return UserUseCase(authRepository)
+    fun provideAuthUseCase(authRepository: AuthRepository): AuthUseCase {
+        return AuthUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        firestore: FirebaseFirestore
+    ): UserRepository = UserRepositoryImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideUserUseCase(userRepository: UserRepository): UserUseCase {
+        return UserUseCase(userRepository)
     }
 
     @Provides

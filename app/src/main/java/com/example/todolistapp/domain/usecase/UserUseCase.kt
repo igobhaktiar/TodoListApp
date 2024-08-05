@@ -1,14 +1,7 @@
 package com.example.todolistapp.domain.usecase
 
-import com.example.todolistapp.data.model.User
-import com.example.todolistapp.domain.repository.AuthRepository
+import com.example.todolistapp.domain.repository.UserRepository
 
-class UserUseCase(private val authRepository: AuthRepository) {
-    suspend fun login(email: String, password: String): Result<Boolean> {
-        return authRepository.login(email, password)
-    }
-
-    suspend fun register(email: String, password: String, username: String): Result<User> {
-        return authRepository.register(email, password, username)
-    }
+class UserUseCase(private val userRepository: UserRepository) {
+    suspend fun getUser(id: String) = userRepository.getUser(id)
 }

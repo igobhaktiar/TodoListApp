@@ -65,6 +65,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             binding.tvFailedLogin.text = errorMessage
+            println("Error: $errorMessage")
         }
     }
 

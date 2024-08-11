@@ -23,4 +23,14 @@
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
     <string name="log_out">Log Out</string>
     <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="due_date">Due Date</string>
+    <string name="reminder">Reminder</string>
+    <string name="attach_file">Attach File</string>
+    <string name="your_task_title">Your task title</string>
+    <string name="type_your_task_description_here">Type your task description here</string>
+    <string name="dd_mm_yyyy">DD/MM/YYYY</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="attach_your_file">Attach your file...</string>
 </resources>

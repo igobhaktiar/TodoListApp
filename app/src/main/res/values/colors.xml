@@ -6,4 +6,7 @@
     <color name="background">#F7F8FA</color>
     <color name="grey">#A3A3A3</color>
     <color name="red">#FFD32F2F</color>
+    <color name="primary_btn_color">#FF3478F6</color>
+    <color name="secondary_btn_color">#FFA3A3A3</color>
+    <color name="cancel_btn_color">#FFD32F2F</color>
 </resources>

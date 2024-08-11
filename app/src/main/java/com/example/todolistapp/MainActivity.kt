@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.todolistapp.databinding.ActivityMainBinding
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        initAction() // Initialize the action
         initUI() // Initialize the UI
     }
 
@@ -28,6 +31,13 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge() // Enable edge-to-edge display`
         setStatusBarColor() // Set the status bar color
         setUpBottomNav() // Set up the bottom navigation
+    }
+
+    private fun initAction() {
+        binding.fab.setOnClickListener {
+            // Navigate to the add task fragment
+            findNavController(R.id.nav_host_fragment).navigate(R.id.formTaskFragment)
+        }
     }
 
     private fun setStatusBarColor() {
@@ -59,8 +69,10 @@ class MainActivity : AppCompatActivity() {
                 destination.id == R.id.todoFragment
             ) {
                 binding.bottomNavigation.visibility = View.VISIBLE
+                binding.fab.visibility = View.VISIBLE
             } else {
                 binding.bottomNavigation.visibility = View.GONE
+                binding.fab.visibility = View.GONE
             }
         }
     }
